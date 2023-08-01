@@ -104,7 +104,9 @@ class _HomepState extends State<Homep> {
                       padding: EdgeInsets.all(5),
                       color: Colors.amber,
                       child: MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, "mantainance_request");
+                        },
                         child: Text("Maintenance"),
                       ),
                     ),
@@ -123,7 +125,7 @@ class _HomepState extends State<Homep> {
                         onPressed: () {
                           Navigator.pushNamed(context, "message");
                         },
-                        child: Text("Message"),
+                        child: Text("Chatroom"),
                       ),
                     ),
                     Container(
