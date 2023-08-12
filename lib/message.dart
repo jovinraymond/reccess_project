@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({Key? key}) : super(key: key);
+
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? _currentUser;
+  int _selectedIndex = 0;
 
-  // Replace 'your_sender_id' with the current user's ID
-  String currentUserId = 'your_sender_id';
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = _auth.currentUser;
+  }
 
   void sendMessage(String senderId, String receiverId, String message) async {
     final CollectionReference messagesCollection =
@@ -25,21 +33,24 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  //String currentUserId = 'your_sender_id'; // Replace with actual sender ID
+
   void setupMessageListener(String receiverId) {
     final CollectionReference messagesCollection =
         FirebaseFirestore.instance.collection('messages');
 
     messagesCollection
         .where('receiverId', isEqualTo: receiverId)
-        .orderBy('timestamp',
-            descending: true) // Sort by timestamp in descending order
+        .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((querySnapshot) {
-      setState(() {
-        // Instead of using chatMessages, use querySnapshot directly
-        // Use querySnapshot.docs directly without assigning it to chatMessages
-        final messages = querySnapshot.docs;
-      });
+      // Handle received messages as needed
     });
   }
 
@@ -50,6 +61,62 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Text('Chat', textAlign: TextAlign.center),
         backgroundColor: Colors.blueGrey,
         elevation: 0,
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.black,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pushNamed(context, "home");
+              },
+            ),
+            ListTile(
+              title: Text('View Profile'),
+              onTap: () {
+                Navigator.pushNamed(context, 'user_profile');
+              },
+            ),
+            ListTile(
+              title: Text('Contact landlord'),
+              onTap: () {
+                Navigator.pushNamed(context, 'mantainance_request');
+              },
+            ),
+            ListTile(
+              title: Text('Feedback'),
+              onTap: () {
+                Navigator.pushNamed(context, 'feedback');
+              },
+            ),
+            ListTile(
+              title: Text('Emergency Contacts'),
+              onTap: () {
+                Navigator.pushNamed(context, 'emergency');
+              },
+            ),
+            ListTile(
+              iconColor: Colors.amber,
+              title: Text('Logout'),
+              onTap: () {
+                Navigator.pushNamed(context, 'login');
+              },
+            ),
+          ],
+        ),
       ),
       body: Container(
         color: Colors.black,
@@ -67,36 +134,44 @@ class _ChatScreenState extends State<ChatScreen> {
                     );
                   }
 
-                  // Start listening to messages specific to the current user as receiver
-                  setupMessageListener(currentUserId);
-
                   final messages = snapshot.data!.docs;
 
                   return ListView.builder(
                     reverse: true,
+                    itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
                       final String messageText = message['text'];
                       final String senderId = message['senderId'];
 
-                      // Customize the UI to show different styles for sender and receiver messages
-                      return ListTile(
-                        title: Text(
-                          messageText,
-                          textAlign: senderId == currentUserId
-                              ? TextAlign
-                                  .end // Align sender's messages to the right
-                              : TextAlign
-                                  .start, // Align receiver's messages to the left
-                          style: TextStyle(
-                            color: senderId == currentUserId
-                                ? Colors.white
-                                : Colors.green,
+                      final isSender = senderId == _currentUser;
+
+                      return Container(
+                        padding: EdgeInsets.only(
+                          left: 14,
+                          right: 14,
+                          top: 10,
+                          bottom: 10,
+                        ),
+                        child: Align(
+                          alignment:
+                              isSender ? Alignment.topRight : Alignment.topLeft,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: isSender
+                                  ? Colors.blue[200]
+                                  : Colors.grey.shade200,
+                            ),
+                            padding: EdgeInsets.all(16),
+                            child: Text(
+                              messageText,
+                              style: TextStyle(fontSize: 15),
+                            ),
                           ),
                         ),
                       );
                     },
-                    itemCount: messages.length,
                   );
                 },
               ),
@@ -116,20 +191,17 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
+                  SizedBox(width: 5),
                   Container(
                     color: Colors.amber,
                     child: IconButton(
-                      //padding: EdgeInsets.,//double.infinity,
                       color: Colors.black,
                       icon: Icon(Icons.send),
                       onPressed: () {
                         String message = _messageController.text.trim();
                         if (message.isNotEmpty) {
                           sendMessage(
-                              currentUserId, 'your_receiver_id', message);
+                              _currentUser!.uid, 'your_receiver_id', message);
                           _messageController.clear();
                         }
                       },
@@ -138,8 +210,30 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 10,
+            )
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
