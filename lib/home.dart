@@ -129,7 +129,9 @@ class _HomepState extends State<Homep> {
                         children: [
                           Icon(Icons.phone_android, size: 50),
                           MaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, "payment_page");
+                            },
                             child: Text(
                               "Payment",
                               style: TextStyle(
