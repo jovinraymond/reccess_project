@@ -1,8 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'
     show MaterialApp, WidgetsFlutterBinding, runApp;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:loginuicolors/emergency.dart';
+import 'package:loginuicolors/feedback.dart';
+import 'package:loginuicolors/lease_agreement.dart';
 import 'package:loginuicolors/mantainance_request.dart';
 import 'package:loginuicolors/message.dart';
+import 'package:loginuicolors/payment_page.dart';
+import 'package:loginuicolors/user_profile.dart';
 import 'home.dart';
 import 'login.dart';
 import 'register.dart';
@@ -30,6 +36,16 @@ Future<void> main() async {
       'message': (context) => ChatScreen(),
       'home': (context) => Homep(),
       'login': (context) => MyLogin(),
+      'emergency': (context) => EmergencyContactsPage(),
+      'feedback': (context) => FeedbackPage(),
+      'user_profile': (context) => ProfilePage(
+          userProfile: UserProfile(
+              email: 'email',
+              name: 'name',
+              phoneNumber: 'phoneNumber',
+              roomNumber: 'roomNumber')),
+      'lease_agreement': (context) => LeaseAgreementScreen(),
+      'payment_page': (context) => PaymentPage(),
     },
   ));
 }
