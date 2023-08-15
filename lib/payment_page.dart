@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave_standard/flutterwave.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:ui';
 
 void main() {
   runApp(PaymentPage());
@@ -47,6 +50,62 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.black,
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pushNamed(context, "home");
+              },
+            ),
+            ListTile(
+              title: Text('View Profile'),
+              onTap: () {
+                Navigator.pushNamed(context, 'user_profile');
+              },
+            ),
+            ListTile(
+              title: Text('Contact landlord'),
+              onTap: () {
+                Navigator.pushNamed(context, 'mantainance_request');
+              },
+            ),
+            ListTile(
+              title: Text('Feedback'),
+              onTap: () {
+                Navigator.pushNamed(context, 'feedback');
+              },
+            ),
+            ListTile(
+              title: Text('Emergency Contacts'),
+              onTap: () {
+                Navigator.pushNamed(context, 'emergency');
+              },
+            ),
+            ListTile(
+              iconColor: Colors.amber,
+              title: Text('Logout'),
+              onTap: () {
+                Navigator.pushNamed(context, 'login');
+              },
+            ),
+          ],
+        ),
       ),
       body: Container(
         width: double.infinity,
