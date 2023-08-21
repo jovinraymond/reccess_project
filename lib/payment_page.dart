@@ -275,7 +275,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final Flutterwave flutterwave = Flutterwave(
         context: context,
-        publicKey: "FLWPUBK_TEST-7fca23ff4154d6afee133984a6a83f9e-X",
+        publicKey: "FLWPUBK-d1abf117b016d463130ce4477b58bf31-X",
         currency: this.selectedCurrency,
         redirectUrl: 'https://facebook.com',
         txRef: Uuid().v1(),
@@ -290,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String getPublicKey() {
-    return "FLWPUBK_TEST-7fca23ff4154d6afee133984a6a83f9e-X";
+    return "FLWPUBK-d1abf117b016d463130ce4477b58bf31-X";
   }
 
   void _openBottomSheet() {
