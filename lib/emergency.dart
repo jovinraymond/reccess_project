@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 
-class EmergencyContactsPage extends StatelessWidget {
+class EmergencyContactsPage extends StatefulWidget {
   @override
+  State<EmergencyContactsPage> createState() => _EmergencyContactsPageState();
+}
+
+class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
+  @override
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Emergency Contacts'),
+        backgroundColor: Colors.black,
       ),
       drawer: Drawer(
         child: ListView(
@@ -63,17 +77,55 @@ class EmergencyContactsPage extends StatelessWidget {
           ],
         ),
       ),
-      body: Center(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/ews.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'Emergency Contacts \n Please reach the landlord or care taker on the following numbers; \n 078855426\n 0445776894 \n 86457667',
-              style: TextStyle(fontSize: 20),
+            Text("Emergency Contacts ",
+                style: TextStyle(fontSize: 40, fontStyle: FontStyle.italic)),
+            SizedBox(
+              height: 50,
+            ),
+            Container(
+              padding: EdgeInsets.all(40),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(35),
+              ),
+              child: Text(
+                ' Please reach the landlord or care taker on the following numbers; \n 078855426\n 0445776894 \n 86457667',
+                style: TextStyle(fontSize: 20),
+              ),
             ),
             // Display emergency contacts information here
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+              backgroundColor: Colors.pink),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
