@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:js' as js;
 
+//import 'dart:js' as js;
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:flutter_signature_pad/flutter_signature_pad.dart';
@@ -9,8 +10,6 @@ import 'package:signature/signature.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:open_file/open_file.dart';
 
 class LeaseAgreementScreen extends StatefulWidget {
   @override
@@ -21,42 +20,29 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
   bool _isAccepted = false;
 
   int _selectedIndex = 0;
+  String _tenantName = ''; // Initialize the tenant name
+  String _tenantEmail = '';
+  //String _tenantName = ''; // Initialize the tenant name
 
-  Future<void> _createPDF() async {
-    //Create a new PDF document
-    PdfDocument document = PdfDocument();
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData(); // Fetch user data when the screen initializes
+  }
 
-    //Add a new page and draw text
-    document.pages.add().graphics.drawString(
-        'Hello World!', PdfStandardFont(PdfFontFamily.helvetica, 20),
-        brush: PdfSolidBrush(PdfColor(0, 0, 0)),
-        bounds: Rect.fromLTWH(0, 0, 500, 50));
+  Future<void> _fetchUserData() async {
+    // Assuming you're using Firebase Authentication
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String userId = user.uid;
+      // Now you have the user ID
 
-    //Save the document
-    List<int> bytes = await document.save();
-
-    //Get external storage directory
-    final directory = await getApplicationSupportDirectory();
-
-    //Get directory path
-    final path = directory.path;
-
-    //Create an empty file to write PDF data
-    File file = File('$path/Output.pdf');
-
-    //Write PDF data
-    await file.writeAsBytes(bytes, flush: true);
-
-    //Open the PDF document in mobile
-    OpenFile.open('$path/Output.pdf');
-    js.context['pdfData'] = base64.encode(bytes);
-    js.context['filename'] = 'Output.pdf';
-    Timer.run(() {
-      js.context.callMethod('download');
-    });
-
-    //Dispose the document
-    document.dispose();
+      // Fetch user data from your authentication system
+      setState(() {
+        _tenantName = user.displayName ?? '';
+        _tenantEmail = user.email ?? '';
+      });
+    }
   }
 
   void _onItemTapped(int index) {
@@ -76,11 +62,6 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
     super.dispose();
   }
 
-  void initState() {
-    super.initState();
-    _loadAcceptanceStatus();
-  }
-
   _loadAcceptanceStatus() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -98,8 +79,8 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
     // Signature Pad Widget
     Signature _signatureCanvas = Signature(
       controller: _controller,
-      width: 300,
-      height: 300,
+      width: 200,
+      height: 200,
       backgroundColor: Colors.black,
     );
 
@@ -243,6 +224,10 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
               // Signature Pad
 
               // Signature Pad Widget
+              Text("Tenant's signature:"),
+              _signatureCanvas,
+              SizedBox(height: 16),
+              Text("Landlord's signature:"),
               _signatureCanvas,
 
               SizedBox(height: 16),
@@ -250,7 +235,7 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
               Row(
                 children: [
                   SizedBox(
-                    width: 50,
+                    width: 90,
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -268,17 +253,28 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
                       if (_isAccepted) {
                         // Proceed with the next steps in your app.
                         LeaseAgreement agreement = LeaseAgreement(
-                          tenantName:
-                              'John Doe', // Replace with the actual tenant name.
-                          propertyDetails:
-                              'Property details...', // Replace with actual details.
+                          tenantName: _tenantName.isNotEmpty
+                              ? _tenantName
+                              : _tenantEmail, // Use name or email
+                          tenantEmail:
+                              _tenantEmail, // Use the fetched tenant email
+                          propertyDetails: 'Property details...',
                         );
                         // Save the lease agreement to the database.
-                        LeaseAgreementDatabase database =
-                            LeaseAgreementDatabase();
-                        await database.saveLeaseAgreement(agreement);
+                        // Assuming you have the user ID available
+                        // Retrieve the user ID using Firebase Authentication
+                        FirebaseAuth auth = FirebaseAuth.instance;
+                        User? user = auth.currentUser;
 
-                        Navigator.pushNamed(context, "home");
+                        if (user != null) {
+                          String userId = user.uid;
+
+                          LeaseAgreementDatabase database =
+                              LeaseAgreementDatabase();
+                          await database.saveLeaseAgreement(userId, agreement);
+
+                          Navigator.pushNamed(context, "home");
+                        }
                         // For example, navigate to the next screen or perform necessary actions.
                       } else {
                         // Handle the case when the user declines the agreement.
@@ -309,11 +305,6 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
                   SizedBox(
                     width: 50,
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        _createPDF();
-                      },
-                      child: Text("Generate pdf"))
                 ],
               ),
             ],
@@ -345,6 +336,7 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
   // Function to save the signature as an image or in your desired format
   // Function to save the signature as an image locally
   //
+  //
 
   void _saveSignature() async {
     final signatureImage = await _controller.toPngBytes();
@@ -372,12 +364,15 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
 }
 
 class LeaseAgreementDatabase {
-  final CollectionReference leaseAgreementCollection =
-      FirebaseFirestore.instance.collection('lease_agreements');
-
-  Future<void> saveLeaseAgreement(LeaseAgreement agreement) async {
+  Future<void> saveLeaseAgreement(
+      String userId, LeaseAgreement agreement) async {
     try {
-      await leaseAgreementCollection.add(agreement.toMap());
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection(
+              'lease_agreements') // Subcollection under the user's document
+          .add(agreement.toMap());
     } catch (e) {
       print('Error saving lease agreement: $e');
       // Handle the error as needed, such as showing an error message.
@@ -386,15 +381,21 @@ class LeaseAgreementDatabase {
 }
 
 class LeaseAgreement {
-  String tenantName;
+  String tenantName; // Current user's name
+  String tenantEmail; // Current user's email
   String propertyDetails;
   // Add more fields as needed.
 
-  LeaseAgreement({required this.tenantName, required this.propertyDetails});
+  LeaseAgreement({
+    required this.tenantName,
+    required this.tenantEmail,
+    required this.propertyDetails,
+  });
 
   Map<String, dynamic> toMap() {
     return {
       'tenantName': tenantName,
+      'tenantEmail': tenantEmail,
       'propertyDetails': propertyDetails,
       // Add more fields as needed.
     };
