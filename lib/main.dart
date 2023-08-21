@@ -40,7 +40,8 @@ Future<void> main() async {
               userProfile: UserProfile(
             email: 'email',
             name: 'name',
-            phone: 'phoneNumber',
+            phoneNumber: 'phoneNumber',
+            roomNumber: 'roomNumber',
           )),
       'lease_agreement': (context) => LeaseAgreementScreen(),
       'payment_page': (context) => PaymentPage(),
