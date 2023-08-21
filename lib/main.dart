@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart'
     show MaterialApp, WidgetsFlutterBinding, runApp;
 import 'package:firebase_core/firebase_core.dart';
@@ -8,12 +7,11 @@ import 'package:loginuicolors/lease_agreement.dart';
 import 'package:loginuicolors/mantainance_request.dart';
 import 'package:loginuicolors/message.dart';
 import 'package:loginuicolors/payment_page.dart';
+import 'package:loginuicolors/slpash_sreen.dart';
 import 'package:loginuicolors/user_profile.dart';
 import 'home.dart';
 import 'login.dart';
 import 'register.dart';
-//import 'message.dart';
-//import 'mantainance_request.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +27,7 @@ Future<void> main() async {
 
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyLogin(),
+    home: SplashScreen(),
     routes: {
       'mantainance_request': (context) => SendEmailScreen(),
       'register': (context) => MyRegister(),
@@ -39,11 +37,11 @@ Future<void> main() async {
       'emergency': (context) => EmergencyContactsPage(),
       'feedback': (context) => FeedbackPage(),
       'user_profile': (context) => ProfilePage(
-          userProfile: UserProfile(
-              email: 'email',
-              name: 'name',
-              phoneNumber: 'phoneNumber',
-              roomNumber: 'roomNumber')),
+              userProfile: UserProfile(
+            email: 'email',
+            name: 'name',
+            phone: 'phoneNumber',
+          )),
       'lease_agreement': (context) => LeaseAgreementScreen(),
       'payment_page': (context) => PaymentPage(),
     },

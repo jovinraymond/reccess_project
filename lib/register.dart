@@ -257,7 +257,7 @@ class _MyRegisterState extends State<MyRegister> {
                               onPressed: () {
                                 _submitForm();
                                 _signUpPressed();
-                                Navigator.pushNamed(context, 'login');
+                                Navigator.pushNamed(context, 'lease_agreement');
                               },
                               child: Text(
                                 "Sign up",

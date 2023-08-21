@@ -40,8 +40,14 @@ class _MyHomePageState extends State<MyHomePage> {
   final phoneNumberController = TextEditingController();
 
   String selectedCurrency = "UGX";
+  int _selectedIndex = 0;
 
   bool isTestMode = true;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Colors.black,
       ),
       drawer: Drawer(
         child: ListView(
@@ -108,8 +115,14 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: Container(
-        width: double.infinity,
-        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/yo.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        //width: double.infinity,
+        //margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Form(
           key: this.formKey,
           child: ListView(
@@ -211,6 +224,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 50,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.black,
+                    padding: EdgeInsets.all(23),
+                    primary: Colors.white,
+                  ),
                   onPressed: this._onPressed,
                   child: Text(
                     "Make Payment",
@@ -221,6 +239,26 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+              backgroundColor: Colors.pink),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
