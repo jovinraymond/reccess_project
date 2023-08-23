@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'authentication.dart';
 
 class MyRegister extends StatefulWidget {
   const MyRegister({Key? key}) : super(key: key);
@@ -14,6 +16,26 @@ class _MyRegisterState extends State<MyRegister> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  bool _userSignedIn = false;
+  final Authentication _authentication = Authentication();
+
+  void initState() {
+    super.initState();
+
+    /// Events are fired when the following occurs:
+    /// - Right after the listener has been registered.
+    /// - When a user is signed in.
+    /// - When the current user is signed out.
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+        setState(() => _userSignedIn = false);
+      } else {
+        print('User is signed in!');
+        setState(() => _userSignedIn = true);
+      }
+    });
+  }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
@@ -39,6 +61,24 @@ class _MyRegisterState extends State<MyRegister> {
         // You can handle the error gracefully here
       });
     }
+  }
+
+  void _signUpPressed() async {
+    _authentication.signUp(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
+  }
+
+  void _signInPressed() async {
+    _authentication.signIn(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
+  }
+
+  void _signOutPressed() async {
+    _authentication.signOut();
   }
 
   @override
@@ -216,7 +256,8 @@ class _MyRegisterState extends State<MyRegister> {
                             TextButton(
                               onPressed: () {
                                 _submitForm();
-                                Navigator.pushNamed(context, 'login');
+                                _signUpPressed();
+                                Navigator.pushNamed(context, 'lease_agreement');
                               },
                               child: Text(
                                 "Sign up",

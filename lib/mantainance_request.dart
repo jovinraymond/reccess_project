@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,69 +16,187 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.black,
         title: Text('Send a Maintenance request'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          // Wrap your content in a Form widget and use _formKey.
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Recipient Email'),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.black,
               ),
-              SizedBox(height: 10),
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Your Name'),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  maxLines: null,
-                  expands: true,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(labelText: 'Body'),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
                 ),
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final response = await sendEmail(
-                      _nameController.text, // Step 2
-                      _emailController.text, // Step 2
-                      _messageController.text, // Step 2
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      response == 200
-                          ? const SnackBar(
-                              content: Text('Message Sent!'),
-                              backgroundColor: Colors.green)
-                          : const SnackBar(
-                              content: Text('Failed to send message!'),
-                              backgroundColor: Colors.red),
-                    );
-                    _nameController.clear(); // Step 2
-                    _emailController.clear(); // Step 2
-                    _messageController.clear(); // Step 2
-                  }
-                },
-                child: Text("Send Email"),
-              ),
-            ],
+            ),
+            ListTile(
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pushNamed(context, "home");
+              },
+            ),
+            ListTile(
+              title: Text('View Profile'),
+              onTap: () {
+                Navigator.pushNamed(context, 'profile');
+              },
+            ),
+            ListTile(
+              title: Text('Contact landlord'),
+              onTap: () {
+                Navigator.pushNamed(context, 'mantainance_request');
+              },
+            ),
+            ListTile(
+              title: Text('Feedback'),
+              onTap: () {
+                Navigator.pushNamed(context, 'feedback');
+              },
+            ),
+            ListTile(
+              title: Text('Emergency Contacts'),
+              onTap: () {
+                Navigator.pushNamed(context, 'emergency');
+              },
+            ),
+            ListTile(
+              iconColor: Colors.amber,
+              title: Text('Logout'),
+              onTap: () {
+                Navigator.pushNamed(context, 'login');
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/ews.jpg'), fit: BoxFit.cover),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            // Wrap your content in a Form widget and use _formKey.
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                      labelText: 'Landlord Email',
+                      fillColor: Colors.grey.shade100,
+                      filled: true,
+                      icon: Icon(Icons.email)),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                      labelText: 'Your Name',
+                      fillColor: Colors.grey.shade100,
+                      filled: true,
+                      icon: Icon(Icons.person)),
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    maxLines: null,
+                    expands: true,
+                    keyboardType: TextInputType.multiline,
+                    decoration: InputDecoration(
+                        labelText: 'Body',
+                        fillColor: Color(0x62f9f3f3),
+                        filled: true,
+                        icon: Icon(Icons.text_format)),
+                  ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.black,
+                      padding: EdgeInsets.all(25)),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      final response = await sendEmail(
+                        _nameController.text, // Step 2
+                        _emailController.text, // Step 2
+                        _messageController.text, // Step 2
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        response == 200
+                            ? const SnackBar(
+                                content: Text('Message Sent!'),
+                                backgroundColor: Colors.green)
+                            : const SnackBar(
+                                content: Text('Failed to send message!'),
+                                backgroundColor: Colors.red),
+                      );
+                      _nameController.clear(); // Step 2
+                      _emailController.clear(); // Step 2
+                      _messageController.clear(); // Step 2
+                    }
+                  },
+                  child: Text("Send Email",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 20)),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+              backgroundColor: Colors.pink),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (index == 0) {
+            // Navigate to the homepage when the home icon is tapped
+            Navigator.pushReplacementNamed(context, "home");
+          } else {
+            _onItemTapped(
+                index); // Continue with the existing logic for other icons
+          }
+        },
+      ), // This trailing
     );
   }
 

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // You might need this for user management.
+
+//import 'package:fluttertoast/fluttertoast.dart';
+//import 'package:loginuicolors/home.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -8,40 +12,27 @@ class MyLogin extends StatefulWidget {
   _MyLoginState createState() => _MyLoginState();
 }
 
-
 class _MyLoginState extends State<MyLogin> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      String email = emailController.text;
-      String password = passwordController.text;
-
-      try {
-        // Sign in the user with email and password
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
+  Future<void> _loginUser() async {
+    try {
+      if (_formKey.currentState!.validate()) {
+        final UserCredential userCredential =
+            await _auth.signInWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
         );
 
-        // User authentication successful
-        User? user = userCredential.user;
-        if (user != null) {
-          // Navigate to the home page or perform other actions after successful login
-          Navigator.pushNamed(context, 'home');
-        }
-      } catch (e) {
-        // Handle any errors that occur during the login process
-        print('Error logging in: $e');
-        // Show an error message to the user or handle the error gracefully
+        // User is authenticated, navigate to the authorized screen.
+        Navigator.pushReplacementNamed(context, "home");
       }
-
-      // Clear the input fields
-      emailController.clear();
-      passwordController.clear();
+    } catch (e) {
+      // Handle login error (show a snackbar, toast, or dialog).
+      print("Login error: $e");
     }
   }
 
@@ -127,8 +118,8 @@ class _MyLoginState extends State<MyLogin> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    _submitForm();
-                                    Navigator.pushNamed(context, "home");
+                                    _loginUser();
+                                    //Navigator.pushNamed(context, "home");
                                   },
                                   child: Text(
                                     "Login",

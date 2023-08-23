@@ -40,18 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final phoneNumberController = TextEditingController();
 
   String selectedCurrency = "UGX";
+  int _selectedIndex = 0;
 
   bool isTestMode = true;
-<<<<<<< Updated upstream
-=======
-  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
-    });
-  }
->>>>>>> Stashed changes
+      _selectedIndex
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +55,21 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-<<<<<<< Updated upstream
-=======
         backgroundColor: Colors.black,
-        actions: [],
->>>>>>> Stashed changes
+        actions: [], 
+        backgroundColor: Colors.black,
+
       ),
 
       body: Container(
-        width: double.infinity,
-        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/yo.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        //width: double.infinity,
+        //margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Form(
           key: this.formKey,
           child: ListView(
@@ -171,14 +171,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 50,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: ElevatedButton(
-<<<<<<< Updated upstream
-=======
+
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.white,
                     padding: EdgeInsets.all(23),
                     primary: Colors.black,
                   ),
->>>>>>> Stashed changes
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.black,
+                    padding: EdgeInsets.all(23),
+                    primary: Colors.white,
+                  ),
+
                   onPressed: this._onPressed,
                   child: Text(
                     "Make Payment",
@@ -189,8 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-<<<<<<< Updated upstream
-=======
+
       ),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -210,6 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.pink),
         ],
         currentIndex: _selectedIndex,
+
         onTap: (index) {
           if (index == 0) {
             // Navigate to the homepage when the home icon is tapped
@@ -218,8 +222,9 @@ class _MyHomePageState extends State<MyHomePage> {
             _onItemTapped(
                 index); // Continue with the existing logic for other icons
           }
-        },
->>>>>>> Stashed changes
+   
+        onTap: _onItemTapped,
+
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
