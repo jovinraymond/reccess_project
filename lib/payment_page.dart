@@ -43,11 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   bool isTestMode = true;
+
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
-    });
-  }
+      _selectedIndex
 
   @override
   Widget build(BuildContext context) {
@@ -57,63 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.black,
+        actions: [], 
+        backgroundColor: Colors.black,
+
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pushNamed(context, "home");
-              },
-            ),
-            ListTile(
-              title: Text('View Profile'),
-              onTap: () {
-                Navigator.pushNamed(context, 'user_profile');
-              },
-            ),
-            ListTile(
-              title: Text('Contact landlord'),
-              onTap: () {
-                Navigator.pushNamed(context, 'mantainance_request');
-              },
-            ),
-            ListTile(
-              title: Text('Feedback'),
-              onTap: () {
-                Navigator.pushNamed(context, 'feedback');
-              },
-            ),
-            ListTile(
-              title: Text('Emergency Contacts'),
-              onTap: () {
-                Navigator.pushNamed(context, 'emergency');
-              },
-            ),
-            ListTile(
-              iconColor: Colors.amber,
-              title: Text('Logout'),
-              onTap: () {
-                Navigator.pushNamed(context, 'login');
-              },
-            ),
-          ],
-        ),
-      ),
+
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -224,11 +171,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 50,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: ElevatedButton(
+
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    padding: EdgeInsets.all(23),
+                    primary: Colors.black,
+                  ),
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.black,
                     padding: EdgeInsets.all(23),
                     primary: Colors.white,
                   ),
+
                   onPressed: this._onPressed,
                   child: Text(
                     "Make Payment",
@@ -239,6 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
+
       ),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -258,7 +213,18 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.pink),
         ],
         currentIndex: _selectedIndex,
+
+        onTap: (index) {
+          if (index == 0) {
+            // Navigate to the homepage when the home icon is tapped
+            Navigator.pushReplacementNamed(context, "home");
+          } else {
+            _onItemTapped(
+                index); // Continue with the existing logic for other icons
+          }
+   
         onTap: _onItemTapped,
+
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
@@ -275,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final Flutterwave flutterwave = Flutterwave(
         context: context,
-        publicKey: "FLWPUBK-d1abf117b016d463130ce4477b58bf31-X",
+        publicKey: "FLWPUBK_TEST-7fca23ff4154d6afee133984a6a83f9e-X",
         currency: this.selectedCurrency,
         redirectUrl: 'https://facebook.com',
         txRef: Uuid().v1(),
@@ -290,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String getPublicKey() {
-    return "FLWPUBK-d1abf117b016d463130ce4477b58bf31-X";
+    return "FLWPUBK_TEST-7fca23ff4154d6afee133984a6a83f9e-X";
   }
 
   void _openBottomSheet() {
