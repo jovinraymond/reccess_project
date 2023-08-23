@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MaterialApp(home: ChatScreen()));
@@ -65,11 +66,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (userSnapshot.exists) {
       final userData = userSnapshot.data() as Map<String, dynamic>;
-      final userName = userData['name'];
-      print("Fetched user name: $userName");
-      return userName;
+      return userData['name'];
     } else {
-      print("User document does not exist");
       return "Member";
     }
   }
@@ -138,81 +136,129 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
-      body: Column(children: [
-        Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection(
-                    'messages') // Use the top-level 'messages' collection
-                .orderBy('timestamp', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              final messages = snapshot.data!.docs;
-
-              return ListView.builder(
-                reverse: true,
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  final String messageText = message['text'];
-                  final String senderId = message['senderId'];
-
-                  final isSender = senderId == _currentUser!.uid;
-
-                  return FutureBuilder(
-                    future: getCurrentUserName(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      final senderName = snapshot.data as String;
-
-                      return Align(
-                        alignment: isSender
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color:
-                                isSender ? Colors.blue[100] : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                isSender ? 'You' : senderName,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isSender ? Colors.blue : Colors.black,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(messageText),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection(
+                      'messages') // Use the top-level 'messages' collection
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(
+                    child: CircularProgressIndicator(),
                   );
-                },
-              );
-            },
+                }
+
+                final messages = snapshot.data!.docs;
+
+                return ListView.builder(
+                  reverse: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    final String messageText = message['text'];
+                    final String senderId = message['senderId'];
+
+                    final isSender = senderId == _currentUser!.uid;
+
+                    return FutureBuilder(
+                      future: getCurrentUserName(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        final senderName = snapshot.data as String;
+
+                        return Align(
+                          alignment: isSender
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: isSender
+                                  ? Colors.blue[100]
+                                  : Colors.grey[300],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  isSender ? 'You' : senderName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        isSender ? Colors.blue : Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  // Format the timestamp to display date and time
+                                  DateFormat('MMM d, y HH:mm').format(
+                                    (message['timestamp'] as Timestamp)
+                                        .toDate(),
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(messageText),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
-        ),
-      ]),
+          Divider(height: 1),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      hintText: 'Type a message...',
+                      fillColor: Color(0xffe4e0ec),
+                      filled: true,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 5),
+                Container(
+                  color: Colors.amber,
+                  child: IconButton(
+                    color: Colors.black,
+                    icon: Icon(Icons.send),
+                    onPressed: () {
+                      String message = _messageController.text.trim();
+                      if (message.isNotEmpty) {
+                        sendMessage(message);
+                        _messageController.clear();
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          )
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.pink,
         items: [
