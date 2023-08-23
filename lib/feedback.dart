@@ -54,6 +54,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Feedback and Review'),
+        backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
       drawer: Drawer(
@@ -81,7 +82,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
             ListTile(
               title: Text('View Profile'),
               onTap: () {
-                Navigator.pushNamed(context, 'user_profile');
+                Navigator.pushNamed(context, 'profile');
               },
             ),
             ListTile(
@@ -123,18 +124,27 @@ class _FeedbackPageState extends State<FeedbackPage> {
           children: [
             TextField(
               controller: _feedbackController,
-              decoration: InputDecoration(labelText: 'Feedback'),
+              decoration: InputDecoration(
+                  labelText: 'Feedback',
+                  filled: true,
+                  fillColor: Colors.white,
+                  icon: Icon(Icons.message)),
               maxLines: 3,
             ),
             SizedBox(height: 16),
             TextField(
               controller: _reviewController,
-              decoration: InputDecoration(labelText: 'Review'),
+              decoration: InputDecoration(
+                  labelText: 'Review',
+                  filled: true,
+                  fillColor: Colors.white,
+                  icon: Icon(Icons.reviews)),
               maxLines: 5,
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.black),
+              style: ElevatedButton.styleFrom(
+                  primary: Colors.black, padding: EdgeInsets.all(23)),
               onPressed: _submitFeedbackAndReview,
               child: Text('Submit'),
             ),
