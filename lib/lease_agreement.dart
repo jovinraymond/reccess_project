@@ -51,7 +51,13 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
     });
   }
 
-  final SignatureController _controller = SignatureController(
+  final SignatureController _tenantSignatureController = SignatureController(
+    penStrokeWidth: 5,
+    penColor: Colors.white,
+    exportBackgroundColor: Colors.blue,
+  );
+
+  final SignatureController _landlordSignatureController = SignatureController(
     penStrokeWidth: 5,
     penColor: Colors.white,
     exportBackgroundColor: Colors.blue,
@@ -77,8 +83,15 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
   @override
   Widget build(BuildContext context) {
     // Signature Pad Widget
-    Signature _signatureCanvas = Signature(
-      controller: _controller,
+    Signature _tenantSignatureCanvas = Signature(
+      controller: _tenantSignatureController,
+      width: 200,
+      height: 200,
+      backgroundColor: Colors.black,
+    );
+
+    Signature _landlordSignatureCanvas = Signature(
+      controller: _landlordSignatureController,
       width: 200,
       height: 200,
       backgroundColor: Colors.black,
@@ -108,13 +121,13 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
             ListTile(
               title: Text('Home'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, "home");
               },
             ),
             ListTile(
               title: Text('View Profile'),
               onTap: () {
-                Navigator.pushNamed(context, 'user_profile');
+                Navigator.pushNamed(context, 'profile');
               },
             ),
             ListTile(
@@ -225,10 +238,10 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
 
               // Signature Pad Widget
               Text("Tenant's signature:"),
-              _signatureCanvas,
+              _tenantSignatureCanvas,
               SizedBox(height: 16),
               Text("Landlord's signature:"),
-              _signatureCanvas,
+              _landlordSignatureCanvas,
 
               SizedBox(height: 16),
 
@@ -328,8 +341,16 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
               backgroundColor: Colors.pink),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+        onTap: (index) {
+          if (index == 0) {
+            // Navigate to the homepage when the home icon is tapped
+            Navigator.pushReplacementNamed(context, "home");
+          } else {
+            _onItemTapped(
+                index); // Continue with the existing logic for other icons
+          }
+        },
+      ), // This trailing,
     );
   }
 
@@ -339,28 +360,29 @@ class _LeaseAgreementScreenState extends State<LeaseAgreementScreen> {
   //
 
   void _saveSignature() async {
-    final signatureImage = await _controller.toPngBytes();
-    if (signatureImage != null) {
-      // Convert Uint8List to List<int>
-      List<int> signatureBytes = signatureImage;
+    final tenantSignatureImage = await _tenantSignatureController.toPngBytes();
+    final landlordSignatureImage =
+        await _landlordSignatureController.toPngBytes();
 
-      // Get the application's documents directory
+    if (tenantSignatureImage != null && landlordSignatureImage != null) {
+      // Save tenant's signature
+      List<int> tenantSignatureBytes = tenantSignatureImage;
       Directory appDocumentsDirectory =
           await getApplicationDocumentsDirectory();
+      String tenantFilename = 'tenant_signature.png';
+      File tenantFile = File('${appDocumentsDirectory.path}/$tenantFilename');
+      await tenantFile.writeAsBytes(tenantSignatureBytes);
 
-      // Generate a unique filename for the image
-      String filename =
-          DateTime.now().millisecondsSinceEpoch.toString() + '.png';
-
-      // Create the File object for the image
-      File file = File('${appDocumentsDirectory.path}/$filename');
-
-      // Write the signature image to the file
-      await file.writeAsBytes(signatureImage);
-
-      // Now you have the signature image saved locally and can access it using 'file' variable.
+      // Save landlord's signature
+      List<int> landlordSignatureBytes = landlordSignatureImage;
+      String landlordFilename = 'landlord_signature.png';
+      File landlordFile =
+          File('${appDocumentsDirectory.path}/$landlordFilename');
+      await landlordFile.writeAsBytes(landlordSignatureBytes);
     }
   }
+
+  // Now you have the signature image saved locally and can access it using 'file' variable.
 }
 
 class LeaseAgreementDatabase {
