@@ -61,18 +61,19 @@ class _MenuBarState extends State<CustomMenuBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
+    return Container(
       child: Column(
         children: [
           Container(
             height: MediaQuery.of(context).size.height * 0.3,
-            color: Colors.blue,
+            color: Colors.black,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
                     radius: 50,
+                    child: Image(image: AssetImage("assets/ava1.jpg")),
                     // Display user profile image here
                   ),
                   SizedBox(height: 10),
@@ -84,6 +85,16 @@ class _MenuBarState extends State<CustomMenuBar> {
                 ],
               ),
             ),
+          ),
+          ListTile(
+            leading: Icon(Icons.notifications),
+            title: Text("Home"),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext content) {
+                return MyLogin();
+              }));
+            },
           ),
           ListTile(
             leading: Icon(Icons.person),
