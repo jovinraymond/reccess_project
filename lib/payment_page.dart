@@ -42,6 +42,16 @@ class _MyHomePageState extends State<MyHomePage> {
   String selectedCurrency = "UGX";
 
   bool isTestMode = true;
+<<<<<<< Updated upstream
+=======
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+>>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
@@ -50,63 +60,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+<<<<<<< Updated upstream
+=======
+        backgroundColor: Colors.black,
+        actions: [],
+>>>>>>> Stashed changes
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pushNamed(context, "home");
-              },
-            ),
-            ListTile(
-              title: Text('View Profile'),
-              onTap: () {
-                Navigator.pushNamed(context, 'user_profile');
-              },
-            ),
-            ListTile(
-              title: Text('Contact landlord'),
-              onTap: () {
-                Navigator.pushNamed(context, 'mantainance_request');
-              },
-            ),
-            ListTile(
-              title: Text('Feedback'),
-              onTap: () {
-                Navigator.pushNamed(context, 'feedback');
-              },
-            ),
-            ListTile(
-              title: Text('Emergency Contacts'),
-              onTap: () {
-                Navigator.pushNamed(context, 'emergency');
-              },
-            ),
-            ListTile(
-              iconColor: Colors.amber,
-              title: Text('Logout'),
-              onTap: () {
-                Navigator.pushNamed(context, 'login');
-              },
-            ),
-          ],
-        ),
-      ),
+
       body: Container(
         width: double.infinity,
         margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -211,6 +171,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 50,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: ElevatedButton(
+<<<<<<< Updated upstream
+=======
+                  style: ElevatedButton.styleFrom(
+                    onPrimary: Colors.white,
+                    padding: EdgeInsets.all(23),
+                    primary: Colors.black,
+                  ),
+>>>>>>> Stashed changes
                   onPressed: this._onPressed,
                   child: Text(
                     "Make Payment",
@@ -221,6 +189,37 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
+<<<<<<< Updated upstream
+=======
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+              backgroundColor: Colors.pink),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (index == 0) {
+            // Navigate to the homepage when the home icon is tapped
+            Navigator.pushReplacementNamed(context, "home");
+          } else {
+            _onItemTapped(
+                index); // Continue with the existing logic for other icons
+          }
+        },
+>>>>>>> Stashed changes
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
@@ -237,7 +236,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final Flutterwave flutterwave = Flutterwave(
         context: context,
-        publicKey: "FLWPUBK-d1abf117b016d463130ce4477b58bf31-X",
+        publicKey: "FLWPUBK_TEST-7fca23ff4154d6afee133984a6a83f9e-X",
         currency: this.selectedCurrency,
         redirectUrl: 'https://facebook.com',
         txRef: Uuid().v1(),
@@ -252,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String getPublicKey() {
-    return "FLWPUBK-d1abf117b016d463130ce4477b58bf31-X";
+    return "FLWPUBK_TEST-7fca23ff4154d6afee133984a6a83f9e-X";
   }
 
   void _openBottomSheet() {
