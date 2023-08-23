@@ -16,6 +16,14 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +56,7 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
             ListTile(
               title: Text('View Profile'),
               onTap: () {
-                Navigator.pushNamed(context, 'user_profile');
+                Navigator.pushNamed(context, 'profile');
               },
             ),
             ListTile(
@@ -95,19 +103,19 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Landlord Email',
-                    fillColor: Colors.grey.shade100,
-                    filled: true,
-                  ),
+                      labelText: 'Landlord Email',
+                      fillColor: Colors.grey.shade100,
+                      filled: true,
+                      icon: Icon(Icons.email)),
                 ),
                 SizedBox(height: 10),
                 TextField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    labelText: 'Your Name',
-                    fillColor: Colors.grey.shade100,
-                    filled: true,
-                  ),
+                      labelText: 'Your Name',
+                      fillColor: Colors.grey.shade100,
+                      filled: true,
+                      icon: Icon(Icons.person)),
                 ),
                 SizedBox(height: 10),
                 Expanded(
@@ -117,14 +125,18 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                     expands: true,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
-                      labelText: 'Body',
-                      fillColor: Colors.transparent,
-                      filled: true,
-                    ),
+                        labelText: 'Body',
+                        fillColor: Color(0x62f9f3f3),
+                        filled: true,
+                        icon: Icon(Icons.text_format)),
                   ),
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.black,
+                      padding: EdgeInsets.all(25)),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final response = await sendEmail(
@@ -132,6 +144,7 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                         _emailController.text, // Step 2
                         _messageController.text, // Step 2
                       );
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         response == 200
                             ? const SnackBar(
@@ -147,13 +160,43 @@ class _SendEmailScreenState extends State<SendEmailScreen> {
                     }
                   },
                   child: Text("Send Email",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 20)),
                 ),
               ],
             ),
           ),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.pink,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
+              backgroundColor: Colors.pink),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          if (index == 0) {
+            // Navigate to the homepage when the home icon is tapped
+            Navigator.pushReplacementNamed(context, "home");
+          } else {
+            _onItemTapped(
+                index); // Continue with the existing logic for other icons
+          }
+        },
+      ), // This trailing
     );
   }
 
