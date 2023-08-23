@@ -40,13 +40,15 @@ class _MyHomePageState extends State<MyHomePage> {
   final phoneNumberController = TextEditingController();
 
   String selectedCurrency = "UGX";
-  int _selectedIndex = 0;
 
   bool isTestMode = true;
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.black,
-        actions: [], 
-        backgroundColor: Colors.black,
-
+        actions: [],
       ),
 
       body: Container(
@@ -171,18 +171,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 50,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: ElevatedButton(
-
                   style: ElevatedButton.styleFrom(
                     onPrimary: Colors.white,
                     padding: EdgeInsets.all(23),
                     primary: Colors.black,
                   ),
-                  style: ElevatedButton.styleFrom(
-                    onPrimary: Colors.black,
-                    padding: EdgeInsets.all(23),
-                    primary: Colors.white,
-                  ),
-
                   onPressed: this._onPressed,
                   child: Text(
                     "Make Payment",
@@ -193,7 +186,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-
       ),
 
       bottomNavigationBar: BottomNavigationBar(
@@ -213,7 +205,6 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.pink),
         ],
         currentIndex: _selectedIndex,
-
         onTap: (index) {
           if (index == 0) {
             // Navigate to the homepage when the home icon is tapped
@@ -222,9 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _onItemTapped(
                 index); // Continue with the existing logic for other icons
           }
-   
-        onTap: _onItemTapped,
-
+        },
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
