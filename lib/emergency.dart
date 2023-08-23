@@ -46,7 +46,7 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
             ListTile(
               title: Text('View Profile'),
               onTap: () {
-                Navigator.pushNamed(context, 'user_profile');
+                Navigator.pushNamed(context, 'profile');
               },
             ),
             ListTile(
@@ -88,20 +88,26 @@ class _EmergencyContactsPageState extends State<EmergencyContactsPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("Emergency Contacts ",
-                style: TextStyle(fontSize: 40, fontStyle: FontStyle.italic)),
             SizedBox(
-              height: 50,
+              height: 25,
+            ),
+            Text("Emergency Contacts ",
+                style: TextStyle(
+                    fontSize: 35,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+              height: 30,
             ),
             Container(
               padding: EdgeInsets.all(40),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color(0xffefe7e7),
                 borderRadius: BorderRadius.circular(35),
               ),
               child: Text(
                 ' Please reach the landlord or care taker on the following numbers; \n 078855426\n 0445776894 \n 86457667',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             // Display emergency contacts information here
