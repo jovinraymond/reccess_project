@@ -1,4 +1,4 @@
-import 'dart:html';
+//import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -34,9 +34,11 @@ class _HomepState extends State<Homep> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(
-                width: 5,
-              ),
+              IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "notifications");
+                  },
+                  icon: Icon(Icons.notifications_on_sharp)),
               Text("Home"),
               CircleAvatar(
                 radius: 20,
